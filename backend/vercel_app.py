@@ -1,6 +1,5 @@
 """Vercel serverless entry point for the FastAPI backend."""
 
-from mangum import Mangum
-from main import app
+from main import app  # noqa: F401 — Vercel discovers the ASGI app via this export
 
-handler = Mangum(app, lifespan="off")
+handler = app
