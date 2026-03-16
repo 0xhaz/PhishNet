@@ -15,8 +15,9 @@ __pycache__/
 dist/
 build/
 
-# Database
+# Database (exclude all except the app DB needed for Vercel deployment)
 *.db
+!backend/data/phishnet.db
 
 # IDE
 .vscode/
