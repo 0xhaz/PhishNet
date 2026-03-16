@@ -17,19 +17,19 @@ _excluded_list = list(EXCLUDED_ADDRESSES)
 SECURITY_METHODS = {
     "tx_origin": {
         "label": "tx.origin check",
-        "gas_per_call": 2,
+        "gas_per_call": 2_600,
         "monthly_gas": 80_000,
-        "monthly_usd": 0.30,
+        "monthly_usd": 0.10,
         "security_level": "vulnerable",
-        "description": "Checks tx.origin == owner. Costs ~2 gas per check but is bypassable via callback phishing.",
+        "description": "Checks tx.origin == owner. Cheapest option but is bypassable via callback phishing.",
     },
     "msg_sender": {
         "label": "msg.sender check",
-        "gas_per_call": 2,
-        "monthly_gas": 80_000,
-        "monthly_usd": 0.30,
+        "gas_per_call": 2_800,
+        "monthly_gas": 90_000,
+        "monthly_usd": 0.40,
         "security_level": "moderate",
-        "description": "Checks msg.sender == owner. Same gas cost as tx.origin but immune to callback phishing. Still vulnerable if owner key is compromised.",
+        "description": "Checks msg.sender == owner. Slightly more gas than tx.origin but immune to callback phishing.",
     },
     "ecrecover": {
         "label": "ECDSA signature verification",
