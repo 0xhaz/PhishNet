@@ -3,13 +3,17 @@ from __future__ import annotations
 
 import os
 import httpx
-from web3 import Web3
+
+try:
+    from web3 import Web3
+except ImportError:
+    Web3 = None  # type: ignore
 
 ALCHEMY_URL = os.getenv("ALCHEMY_RPC_URL", "")
 ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY", "")
 ETHERSCAN_BASE = "https://api.etherscan.io/v2/api"
 
-w3 = Web3(Web3.HTTPProvider(ALCHEMY_URL)) if ALCHEMY_URL else None
+w3 = Web3(Web3.HTTPProvider(ALCHEMY_URL)) if (Web3 and ALCHEMY_URL) else None
 
 
 class EthDataFetcher:

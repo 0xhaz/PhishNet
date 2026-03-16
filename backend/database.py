@@ -50,7 +50,16 @@ CREATE TABLE IF NOT EXISTS flagged_contracts (
 
 
 def get_db() -> sqlite3.Connection:
-    conn = sqlite3.connect(DB_PATH)
+    import os
+    db_path = DB_PATH
+    # Vercel has a read-only filesystem — copy DB to /tmp on first use
+    if os.environ.get("VERCEL"):
+        tmp_db = Path("/tmp/phishnet.db")
+        if not tmp_db.exists():
+            import shutil
+            shutil.copy2(DB_PATH, tmp_db)
+        db_path = tmp_db
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 
