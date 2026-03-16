@@ -29,14 +29,18 @@ class EthDataFetcher:
 
     # --- Etherscan methods ---
 
-    def _etherscan(self, params: dict) -> dict:
+    def _etherscan(self, params: dict, allow_empty: bool = False) -> dict:
         params["apikey"] = ETHERSCAN_API_KEY
         params.setdefault("chainid", "1")
         resp = self._client.get(ETHERSCAN_BASE, params=params)
         resp.raise_for_status()
         data = resp.json()
         if data.get("status") != "1":
-            raise ValueError(f"Etherscan error: {data.get('message')}")
+            msg = data.get("message", "")
+            # "No transactions found" / "No records found" are valid empty results
+            if allow_empty and ("No transactions found" in msg or "No records found" in msg):
+                return []
+            raise ValueError(f"Etherscan error: {msg}")
         return data["result"]
 
     def get_contract_creation_tx(self, address: str) -> dict:

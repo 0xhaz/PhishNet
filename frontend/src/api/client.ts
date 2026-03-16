@@ -77,6 +77,32 @@ export interface DeepAnalysis {
 export const deepAnalyze = (address: string) =>
   api.post<DeepAnalysis>(`/analyze/${address}/deep`).then(r => r.data)
 
+// ─── Trace-Guided Analysis (SKANF-inspired) ─────────────────────────────────
+
+export interface TracedSelector {
+  selector: string
+  name: string | null
+  call_count: number
+  in_bytecode: boolean
+  tx_origin_nearby: boolean
+  risk_level: string
+  sample_txns: string[]
+}
+
+export interface TraceAnalysis {
+  address: string
+  total_transactions: number
+  unique_callers: number
+  vulnerable_called_count: number
+  uncalled_selector_count: number
+  risk_score: number
+  signals: string[]
+  traced_selectors: TracedSelector[]
+}
+
+export const traceAnalyze = (address: string) =>
+  api.post<TraceAnalysis>(`/analyze/${address}/trace`).then(r => r.data)
+
 export const fetchStats = (year?: number) =>
   api.get<Stats>('/stats', { params: year ? { year } : {} }).then(r => r.data)
 

@@ -38,5 +38,11 @@ frontend/dist/
 # Dune query cache
 backend/data/dune_query_ids.json
 
+# Presentation / walkthrough files
+walkthrough_guide.*
+create_slides.py
+*.pptx
+*.docx
+
 # Claude Code
 .claude/

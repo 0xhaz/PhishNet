@@ -8,6 +8,7 @@ import RiskAssessment from '@/components/contract/RiskAssessment'
 import AttackHistory from '@/components/contract/AttackHistory'
 import RecentInteractions from '@/components/contract/RecentInteractions'
 import BytecodeAnalysis from '@/components/contract/BytecodeAnalysis'
+import TraceAnalysis from '@/components/contract/TraceAnalysis'
 import DeployerCluster from '@/components/contract/DeployerCluster'
 
 interface ModuleResult {
@@ -153,6 +154,7 @@ export default function ContractAnalysis() {
         <div className="flex flex-col gap-6">
           {address && <DeployerCluster address={address} />}
           {address && <BytecodeAnalysis address={address} />}
+          {address && <TraceAnalysis address={address} />}
           {address && <AttackHistory address={address} bot={bot} />}
           {address && <RecentInteractions address={address} />}
         </div>

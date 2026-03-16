@@ -9,6 +9,7 @@ from detectors.refund_detector import RefundPhishingDetector
 from core.obfuscation_analyzer import ObfuscationAnalyzer
 from core.call_analyzer import VulnerableCallFinder
 from core.data_fetcher import EthDataFetcher
+from core.trace_analyzer import TraceGuidedAnalyzer
 
 router = APIRouter(tags=["attacks"])
 logger = logging.getLogger(__name__)
@@ -278,6 +279,47 @@ def deep_analysis(address: str):
         "obfuscation": obf_result,
         "call_analysis": call_result,
     }
+
+
+@router.post("/analyze/{address}/trace")
+def trace_analysis(address: str):
+    """Run trace-guided analysis: cross-reference transaction history with bytecode (SKANF-inspired)."""
+    try:
+        analyzer = TraceGuidedAnalyzer(data_fetcher)
+        result = analyzer.analyze(address)
+        return {
+            "address": result.address,
+            "total_transactions": result.total_transactions,
+            "unique_callers": result.unique_callers,
+            "vulnerable_called_count": result.vulnerable_called_count,
+            "uncalled_selector_count": result.uncalled_selector_count,
+            "risk_score": result.risk_score,
+            "signals": result.signals,
+            "traced_selectors": [
+                {
+                    "selector": ts.selector,
+                    "name": ts.name,
+                    "call_count": ts.call_count,
+                    "in_bytecode": ts.in_bytecode,
+                    "tx_origin_nearby": ts.tx_origin_nearby,
+                    "risk_level": ts.risk_level,
+                    "sample_txns": ts.sample_txns,
+                }
+                for ts in result.traced_selectors[:30]
+            ],
+        }
+    except Exception as e:
+        logger.warning(f"Trace analysis failed for {address}: {e}")
+        return {
+            "address": address,
+            "total_transactions": 0,
+            "unique_callers": 0,
+            "vulnerable_called_count": 0,
+            "uncalled_selector_count": 0,
+            "risk_score": 0,
+            "signals": [f"Trace analysis error: {str(e)}"],
+            "traced_selectors": [],
+        }
 
 
 def _run_live_detection(address: str) -> dict:
